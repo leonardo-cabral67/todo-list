@@ -1,3 +1,4 @@
+import React from "react";
 import { GlobalStyles } from "@ui/theme/GlobalStyles";
 
 const bg = "https://mariosouto.com/cursos/crudcomqualidade/bg";
@@ -79,9 +80,7 @@ export default function HomePage() {
                       marginLeft: "4px",
                       fontSize: "1.2em",
                     }}
-                  >
-                    ↓
-                  </span>
+                  ></span>
                 </button>
               </td>
             </tr>
