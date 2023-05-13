@@ -1,6 +1,6 @@
 import React from "react";
 import { GlobalStyles } from "@ui/theme/GlobalStyles";
-import { todoController } from "@ui/controllers/todos";
+import { todoController } from "@ui/controller/todo";
 
 const bg = "https://mariosouto.com/cursos/crudcomqualidade/bg";
 
