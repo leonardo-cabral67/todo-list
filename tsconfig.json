@@ -16,7 +16,9 @@
     "isolatedModules": true,
     "baseUrl": "./",
     "paths": {
-      "@ui/*": ["src/ui/*"]
+      "@ui/*": ["src/ui/*"],
+      "@server/*": ["src/server/*"],
+      "@db-crud-todo": ["core/crud.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
