@@ -13,7 +13,9 @@ export default function HomePage() {
   const [todos, setTodos] = React.useState<HomeTodo[]>([]);
 
   React.useEffect(() => {
-    todoController.get().then(({ todos }) => setTodos(todos));
+    todoController
+      .get({ page: 1, limit: 2 })
+      .then(({ todos }) => setTodos(todos));
   }, []);
 
   return (
