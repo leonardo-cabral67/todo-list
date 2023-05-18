@@ -9,7 +9,7 @@ interface Todo {
 
 interface GetTodoControllerInput {
   page?: number;
-  limit: number;
+  limit?: number;
 }
 
 interface OutputGetTodoController {
@@ -24,10 +24,10 @@ async function get({
 }: GetTodoControllerInput): Promise<OutputGetTodoController> {
   const repositoryParams = {
     page: page || 1,
-    limit,
+    limit: limit || 1,
   };
-
-  return await todoRepository.get(repositoryParams);
+  const res = await todoRepository.get(repositoryParams);
+  return res;
 }
 
 export const todoController = {
