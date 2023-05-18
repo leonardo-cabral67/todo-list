@@ -14,6 +14,7 @@ export default function HomePage() {
   const [page, setPage] = React.useState<number>(1);
   const [totalPages, setTotalPages] = React.useState<number>(1);
   const hasMorePages = totalPages > page;
+  const hasNoTodos = todos.length === 0;
 
   React.useEffect(() => {
     todoController.get({ page, limit: 1 }).then(({ todos, total }) => {
@@ -80,11 +81,13 @@ export default function HomePage() {
               </td>
             </tr> */}
 
-            {/* <tr>
-              <td colSpan={4} align="center">
-                Nenhum item encontrado
-              </td>
-            </tr> */}
+            {hasNoTodos && (
+              <tr>
+                <td colSpan={4} align="center">
+                  Nenhum item encontrado
+                </td>
+              </tr>
+            )}
 
             {hasMorePages && (
               <tr>
