@@ -13,8 +13,15 @@ export default function HomePage() {
   const [todos, setTodos] = React.useState<HomeTodo[]>([]);
   const [page, setPage] = React.useState<number>(1);
   const [totalPages, setTotalPages] = React.useState<number>(1);
-  const hasMorePages = totalPages > page;
-  const hasNoTodos = todos.length === 0;
+  const [search, setSearch] = React.useState<string>("");
+
+  const homeTodos = todoController.filterTodosByContent<HomeTodo>(
+    todos,
+    search
+  );
+
+  const hasMorePages = totalPages > page && homeTodos.length > 0;
+  const hasNoTodos = homeTodos.length === 0;
 
   React.useEffect(() => {
     todoController.get({ page, limit: 1 }).then(({ todos, total }) => {
@@ -46,7 +53,13 @@ export default function HomePage() {
 
       <section>
         <form>
-          <input type="text" placeholder="Filtrar lista atual, ex: Dentista" />
+          <input
+            type="text"
+            placeholder="Filtrar lista atual, ex: Dentista"
+            onChange={function handleSearch(event) {
+              setSearch(event.target.value);
+            }}
+          />
         </form>
 
         <table border={1}>
@@ -62,7 +75,7 @@ export default function HomePage() {
           </thead>
 
           <tbody>
-            {todos.map((todo) => (
+            {homeTodos.map((todo) => (
               <tr key={todo.id}>
                 <td>
                   <input type="checkbox" />
