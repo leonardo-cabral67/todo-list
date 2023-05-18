@@ -1,9 +1,25 @@
+import { todoRepository } from "@server/repository/todo";
 import { NextApiRequest, NextApiResponse } from "next";
-import { read } from "@db-crud-todo";
 
-function get(_: NextApiRequest, res: NextApiResponse) {
-  const ALL_TODOS = read();
-  res.status(200).json({ todos: ALL_TODOS });
+function get(req: NextApiRequest, res: NextApiResponse) {
+  const query = req.query;
+  const page = Number(query.page);
+  const limit = Number(query.limit);
+
+  if (query.page && isNaN(page)) {
+    return res.status(400).json({
+      message: "Page query must be a number",
+    });
+  }
+
+  if (query.limit && isNaN(limit)) {
+    return res.status(400).json({
+      message: "Limit query must be a number",
+    });
+  }
+
+  const ALL_TODOS = todoRepository.get({ page, limit });
+  res.status(200).json(ALL_TODOS);
 }
 
 export const todoController = {
