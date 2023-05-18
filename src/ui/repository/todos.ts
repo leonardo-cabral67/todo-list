@@ -1,7 +1,7 @@
 interface Todo {
   id: string;
   content: string;
-  data: Date;
+  date: Date;
   done: boolean;
 }
 
@@ -55,17 +55,17 @@ function parseTodosFromServer(responseBody: unknown): {
           throw new Error("Invalid todo from API!");
         }
 
-        const { id, content, data, done } = todo as {
+        const { id, content, date, done } = todo as {
           id: string;
           content: string;
-          data: string;
+          date: string;
           done: string;
         };
 
         return {
           id,
           content,
-          data: new Date(data),
+          date: new Date(date),
           done: String(done).toLowerCase() === "true",
         };
       }),
@@ -76,7 +76,7 @@ function parseTodosFromServer(responseBody: unknown): {
     todos: [
       {
         content: "vish",
-        data: new Date(),
+        date: new Date(),
         done: true,
         id: "qw43e  ",
       },

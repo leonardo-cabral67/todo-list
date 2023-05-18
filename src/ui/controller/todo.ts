@@ -3,7 +3,7 @@ import { todoRepository } from "@ui/repository/todos";
 interface Todo {
   id: string;
   content: string;
-  data: Date;
+  date: Date;
   done: boolean;
 }
 

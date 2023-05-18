@@ -7,6 +7,7 @@ type UUID = string;
 interface ITodo {
   id: UUID;
   content: string;
+  date: string;
   done: boolean;
 }
 
