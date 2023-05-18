@@ -11,12 +11,18 @@ interface HomeTodo {
 
 export default function HomePage() {
   const [todos, setTodos] = React.useState<HomeTodo[]>([]);
+  const [page, setPage] = React.useState<number>(1);
+  const [totalPages, setTotalPages] = React.useState<number>(1);
+  const hasMorePages = totalPages > page;
 
   React.useEffect(() => {
-    todoController
-      .get({ page: 1, limit: 2 })
-      .then(({ todos }) => setTodos(todos));
-  }, []);
+    todoController.get({ page, limit: 1 }).then(({ todos, total }) => {
+      setTodos((oldTodos) => {
+        return [...oldTodos, ...todos];
+      });
+      setTotalPages(total);
+    });
+  }, [page]);
 
   return (
     <main>
@@ -60,7 +66,7 @@ export default function HomePage() {
                 <td>
                   <input type="checkbox" />
                 </td>
-                <td>d4f26</td>
+                <td>{todo.id}</td>
                 <td>{todo.content}</td>
                 <td align="right">
                   <button data-type="delete">Apagar</button>
@@ -80,20 +86,25 @@ export default function HomePage() {
               </td>
             </tr> */}
 
-            {/* <tr>
-              <td colSpan={4} align="center" style={{ textAlign: "center" }}>
-                <button data-type="load-more">
-                  Carregar mais{" "}
-                  <span
-                    style={{
-                      display: "inline-block",
-                      marginLeft: "4px",
-                      fontSize: "1.2em",
-                    }}
-                  ></span>
-                </button>
-              </td>
-            </tr> */}
+            {hasMorePages && (
+              <tr>
+                <td colSpan={4} align="center" style={{ textAlign: "center" }}>
+                  <button
+                    data-type="load-more"
+                    onClick={() => setPage(page + 1)}
+                  >
+                    Carregar mais{" "}
+                    <span
+                      style={{
+                        display: "inline-block",
+                        marginLeft: "4px",
+                        fontSize: "1.2em",
+                      }}
+                    ></span>
+                  </button>
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </section>
