@@ -30,6 +30,19 @@ async function get({
   return res;
 }
 
+function filterTodosByContent<Todo>(
+  todos: Array<Todo & { content: string }>,
+  search: string
+): Array<Todo> {
+  const homeTodos = todos.filter((todo) => {
+    const searchNormalized = search.toLowerCase().trim();
+    const todoNormalized = todo.content.toLowerCase();
+    return todoNormalized.includes(searchNormalized);
+  });
+  return homeTodos;
+}
+
 export const todoController = {
   get,
+  filterTodosByContent,
 };
