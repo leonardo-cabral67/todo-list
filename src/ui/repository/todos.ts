@@ -20,43 +20,36 @@ async function get({
   page,
   limit,
 }: GetTodoRepositoryInput): Promise<OutputGetTodoRepository> {
-  return fetch("/api/todos").then(async (response) => {
-    const todosString = await response.text();
-    const ALL_TODOS = parseTodosFromServer(JSON.parse(todosString)).todos;
+  return fetch(`/api/todos?page=${page}&limit=${limit}`).then(
+    async (response) => {
+      const todosString = await response.text();
+      const ALL_TODOS = parseTodosFromServer(JSON.parse(todosString));
 
-    const todosLength: number = ALL_TODOS.length;
-    const totalPages = calculatePages(todosLength, limit);
-
-    const paginatedTodos = paginate(page, limit, ALL_TODOS);
-
-    return {
-      todos: paginatedTodos,
-      total: todosLength,
-      pages: totalPages,
-    };
-  });
+      return {
+        todos: ALL_TODOS.todos,
+        total: ALL_TODOS.total,
+        pages: ALL_TODOS.pages,
+      };
+    }
+  );
 }
 
-function paginate(page: number, limit: number, todos: Todo[]) {
-  const startIndex: number = (page - 1) * limit;
-  const endIndex: number = page * limit;
-  const todosPaginated = todos.slice(startIndex, endIndex);
-  return todosPaginated;
-}
-
-function calculatePages(todosLength: number, limit: number) {
-  const pages: number = Math.ceil(todosLength / limit);
-  return pages;
-}
-
-function parseTodosFromServer(responseBody: unknown): { todos: Todo[] } {
+function parseTodosFromServer(responseBody: unknown): {
+  total: number;
+  pages: number;
+  todos: Todo[];
+} {
   if (
     responseBody !== null &&
     typeof responseBody === "object" &&
     "todos" in responseBody &&
+    "total" in responseBody &&
+    "pages" in responseBody &&
     Array.isArray(responseBody.todos)
   ) {
     return {
+      total: Number(responseBody.total),
+      pages: Number(responseBody.pages),
       todos: responseBody.todos.map((todo) => {
         if (todo !== null && typeof todo !== "object") {
           throw new Error("Invalid todo from API!");
@@ -80,7 +73,16 @@ function parseTodosFromServer(responseBody: unknown): { todos: Todo[] } {
   }
 
   return {
-    todos: [],
+    todos: [
+      {
+        content: "vish",
+        data: new Date(),
+        done: true,
+        id: "qw43e  ",
+      },
+    ],
+    total: 0,
+    pages: 0,
   };
 }
 
