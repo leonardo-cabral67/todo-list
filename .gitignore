@@ -130,3 +130,4 @@ dist
 .pnp.*
 
 .next
+next-env.d.ts
