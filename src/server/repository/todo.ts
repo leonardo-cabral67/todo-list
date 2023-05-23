@@ -1,4 +1,4 @@
-import { read } from "@db-crud-todo";
+import { createByContent, read } from "@db-crud-todo";
 
 type UUID = string;
 
@@ -50,6 +50,12 @@ function calculatePages(todosLength: number, limit: number) {
   return pages;
 }
 
+function create(content: string): Todo {
+  const newTodo = createByContent(content);
+  return newTodo;
+}
+
 export const todoRepository = {
   get,
+  create,
 };
