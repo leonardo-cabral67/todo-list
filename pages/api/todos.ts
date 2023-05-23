@@ -9,5 +9,9 @@ export default function handler(
     return todoController.get(request, response);
   }
 
+  if (request.method === "POST") {
+    return todoController.create(request, response);
+  }
+
   response.status(405).json({ message: "method not allowed" });
 }
