@@ -22,6 +22,16 @@ function get(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).json(ALL_TODOS);
 }
 
+function create(req: NextApiRequest, res: NextApiResponse) {
+  const content = req.body.content;
+  const todoCreated = todoRepository.create(content);
+
+  res.status(201).json({
+    todoCreated,
+  });
+}
+
 export const todoController = {
   get,
+  create,
 };
