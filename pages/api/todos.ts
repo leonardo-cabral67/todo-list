@@ -5,9 +5,9 @@ export default function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
-  if (request.method !== "GET") {
-    return response.status(405).json({ message: "method not allowed" });
+  if (request.method === "GET") {
+    return todoController.get(request, response);
   }
 
-  todoController.get(request, response);
+  response.status(405).json({ message: "method not allowed" });
 }
