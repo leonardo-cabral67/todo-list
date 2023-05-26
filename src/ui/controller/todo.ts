@@ -1,11 +1,5 @@
 import { todoRepository } from "@ui/repository/todos";
-
-interface Todo {
-  id: string;
-  content: string;
-  date: Date;
-  done: boolean;
-}
+import { Todo } from "@ui/schema/todo";
 
 interface GetTodoControllerInput {
   page?: number;
@@ -16,6 +10,12 @@ interface OutputGetTodoController {
   todos: Todo[];
   total: number;
   pages: number;
+}
+
+interface InputCreateTodo {
+  content?: string;
+  onSuccess: () => void;
+  onError: () => void;
 }
 
 async function get({
@@ -42,7 +42,17 @@ function filterTodosByContent<Todo>(
   return homeTodos;
 }
 
+function create({ content, onError, onSuccess }: InputCreateTodo) {
+  if (!content) {
+    onError();
+    return;
+  }
+
+  onSuccess();
+}
+
 export const todoController = {
   get,
   filterTodosByContent,
+  create,
 };

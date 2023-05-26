@@ -1,9 +1,4 @@
-interface Todo {
-  id: string;
-  content: string;
-  date: Date;
-  done: boolean;
-}
+import { Todo } from "@ui/schema/todo";
 
 interface GetTodoRepositoryInput {
   page: number;
@@ -65,7 +60,7 @@ function parseTodosFromServer(responseBody: unknown): {
         return {
           id,
           content,
-          date: new Date(date),
+          date,
           done: String(done).toLowerCase() === "true",
         };
       }),
@@ -76,7 +71,7 @@ function parseTodosFromServer(responseBody: unknown): {
     todos: [
       {
         content: "vish",
-        date: new Date(),
+        date: new Date().toISOString(),
         done: true,
         id: "qw43e  ",
       },
