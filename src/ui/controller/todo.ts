@@ -1,5 +1,6 @@
 import { todoRepository } from "@ui/repository/todos";
 import { Todo } from "@ui/schema/todo";
+import { z as schema } from "zod";
 
 interface GetTodoControllerInput {
   page?: number;
@@ -14,17 +15,16 @@ interface OutputGetTodoController {
 
 interface InputCreateTodo {
   content?: string;
-  onSuccess: () => void;
+  onSuccess: (todo: Todo) => void;
   onError: () => void;
 }
 
 async function get({
   page,
-  limit,
 }: GetTodoControllerInput): Promise<OutputGetTodoController> {
   const repositoryParams = {
     page: page || 1,
-    limit: limit || 1,
+    limit: 2,
   };
   const res = await todoRepository.get(repositoryParams);
   return res;
@@ -43,12 +43,20 @@ function filterTodosByContent<Todo>(
 }
 
 function create({ content, onError, onSuccess }: InputCreateTodo) {
-  if (!content) {
+  const parsedParams = schema.string().nonempty().safeParse(content);
+
+  if (!parsedParams.success) {
     onError();
     return;
   }
-
-  onSuccess();
+  todoRepository
+    .createByContent(parsedParams.data)
+    .then((newTodo) => {
+      onSuccess(newTodo);
+    })
+    .catch(() => {
+      onError();
+    });
 }
 
 export const todoController = {
