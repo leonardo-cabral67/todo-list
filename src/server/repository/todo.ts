@@ -26,7 +26,7 @@ function get({
 }: GetTodoRepositoryInput = {}): OutputGetTodoRepository {
   const currentPage = page || 1;
   const currentLimit = limit || 2;
-  const ALL_TODOS = read();
+  const ALL_TODOS = read().reverse();
   const totalTodos = ALL_TODOS.length;
   const totalPages = calculatePages(totalTodos, currentLimit);
 
