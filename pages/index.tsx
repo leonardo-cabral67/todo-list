@@ -10,27 +10,36 @@ interface HomeTodo {
 }
 
 export default function HomePage() {
+  const initialLoadComplete = React.useRef(false);
   const [todos, setTodos] = React.useState<HomeTodo[]>([]);
   const [page, setPage] = React.useState<number>(1);
-  const [totalPages, setTotalPages] = React.useState<number>(1);
+  const [totalPages, setTotalPages] = React.useState<number>(0);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [search, setSearch] = React.useState<string>("");
+  const [newTodoContent, setNewTodoContent] = React.useState<string>("");
 
   const homeTodos = todoController.filterTodosByContent<HomeTodo>(
     todos,
     search
   );
 
-  const hasMorePages = totalPages > page && homeTodos.length > 0;
-  const hasNoTodos = homeTodos.length === 0;
+  const hasMorePages = totalPages > page;
+  const hasNoTodos = homeTodos.length === 0 && !isLoading;
 
   React.useEffect(() => {
-    todoController.get({ page, limit: 1 }).then(({ todos, total }) => {
-      setTodos((oldTodos) => {
-        return [...oldTodos, ...todos];
-      });
-      setTotalPages(total);
-    });
-  }, [page]);
+    if (!initialLoadComplete.current) {
+      todoController
+        .get({ page })
+        .then(({ todos, pages }) => {
+          setTodos(todos);
+          setTotalPages(pages);
+        })
+        .finally(() => {
+          setIsLoading(false);
+          initialLoadComplete.current = true;
+        });
+    }
+  }, []);
 
   return (
     <main>
@@ -43,8 +52,28 @@ export default function HomePage() {
         <div className="typewriter">
           <h1>O que fazer hoje?</h1>
         </div>
-        <form>
-          <input type="text" placeholder="Correr, Estudar..." />
+        <form
+          onSubmit={function newTodoHandler(e) {
+            e.preventDefault();
+            todoController.create({
+              content: newTodoContent,
+              onSuccess: (todo: HomeTodo) => {
+                setTodos((oldTodos) => {
+                  return [todo, ...oldTodos];
+                });
+                setNewTodoContent("");
+              },
+              onError: () =>
+                alert("You need to provide a content to create a TODO"),
+            });
+          }}
+        >
+          <input
+            type="text"
+            placeholder="Correr, Estudar..."
+            value={newTodoContent}
+            onChange={(e) => setNewTodoContent(e.target.value)}
+          />
           <button type="submit" aria-label="Adicionar novo item">
             +
           </button>
@@ -80,7 +109,7 @@ export default function HomePage() {
                 <td>
                   <input type="checkbox" />
                 </td>
-                <td>{todo.id}</td>
+                <td>{todo.id.substring(0, 4)}</td>
                 <td>{todo.content}</td>
                 <td align="right">
                   <button data-type="delete">Apagar</button>
@@ -88,11 +117,13 @@ export default function HomePage() {
               </tr>
             ))}
 
-            {/* <tr>
-              <td colSpan={4} align="center" style={{ textAlign: "center" }}>
-                Carregando...
-              </td>
-            </tr> */}
+            {isLoading && (
+              <tr>
+                <td colSpan={4} align="center" style={{ textAlign: "center" }}>
+                  Carregando...
+                </td>
+              </tr>
+            )}
 
             {hasNoTodos && (
               <tr>
@@ -107,9 +138,25 @@ export default function HomePage() {
                 <td colSpan={4} align="center" style={{ textAlign: "center" }}>
                   <button
                     data-type="load-more"
-                    onClick={() => setPage(page + 1)}
+                    onClick={() => {
+                      setIsLoading(true);
+                      const nextPage = page + 1;
+                      setPage(nextPage);
+
+                      todoController
+                        .get({ page: nextPage })
+                        .then(({ todos, pages }) => {
+                          setTodos((oldTodos) => {
+                            return [...oldTodos, ...todos];
+                          });
+                          setTotalPages(pages);
+                        })
+                        .finally(() => {
+                          setIsLoading(false);
+                        });
+                    }}
                   >
-                    Carregar mais{" "}
+                    Página {page}, Carregar mais{" "}
                     <span
                       style={{
                         display: "inline-block",
