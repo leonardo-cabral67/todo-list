@@ -1,4 +1,4 @@
-import { createByContent, read } from "@db-crud-todo";
+import { createByContent, read, updateTodo } from "@db-crud-todo";
 
 type UUID = string;
 
@@ -55,7 +55,26 @@ function create(content: string): Todo {
   return newTodo;
 }
 
+function toggleDone(id: UUID): Todo {
+  const ALL_TODOS = read();
+
+  const currentTodo = ALL_TODOS.find((todo) => {
+    return todo.id === id;
+  });
+
+  if (!currentTodo) {
+    throw new Error(`Todo with id "${id}" not found`);
+  }
+
+  const updatedTodo = updateTodo(id, {
+    done: !currentTodo.done,
+  });
+
+  return updatedTodo;
+}
+
 export const todoRepository = {
   get,
   create,
+  toggleDone,
 };
