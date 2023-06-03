@@ -44,7 +44,33 @@ function create(req: NextApiRequest, res: NextApiResponse) {
   });
 }
 
+function toggleDone(req: NextApiRequest, res: NextApiResponse) {
+  const { id } = req.query;
+  const parsedTodoId = schema.string().nonempty().uuid().safeParse(id);
+
+  if (!parsedTodoId.success) {
+    return res.status(400).json({
+      Error: "You have to provide a valid TODO ID!",
+      description: parsedTodoId.error,
+    });
+  }
+
+  try {
+    const updatedTodo = todoRepository.toggleDone(parsedTodoId.data);
+    res.status(200).json({
+      todo: updatedTodo,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(404).json({
+        message: error.message,
+      });
+    }
+  }
+}
+
 export const todoController = {
   get,
   create,
+  toggleDone,
 };
