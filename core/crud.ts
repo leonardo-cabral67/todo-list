@@ -12,6 +12,12 @@ interface ITodo {
   done: boolean;
 }
 
+interface InputUpdateTodo {
+  content?: string;
+  done?: boolean;
+}
+type OutputUpdateTodo = ITodo;
+
 export function createByContent(content: string): ITodo {
   const todo: ITodo = {
     id: uuid(),
@@ -37,4 +43,35 @@ export function read(): ITodo[] {
   }
 
   return db.todos;
+}
+
+export function updateTodo(
+  id: UUID,
+  partialTodo: InputUpdateTodo
+): OutputUpdateTodo {
+  let updatedTodo;
+  const ALL_TODOS = read();
+
+  ALL_TODOS.forEach((todo) => {
+    if (todo.id === id) {
+      updatedTodo = Object.assign(todo, partialTodo);
+    }
+  });
+
+  if (!updatedTodo) {
+    throw new Error("Provide a valid id");
+  }
+
+  writeFileSync(
+    DB_FILE_PATH,
+    JSON.stringify(
+      {
+        todos: ALL_TODOS,
+      },
+      null,
+      1
+    )
+  );
+
+  return updatedTodo;
 }
