@@ -19,6 +19,12 @@ interface InputCreateTodo {
   onError: () => void;
 }
 
+interface InputToggleDone {
+  id: string;
+  onError(): void;
+  updateTodoOnScreen(): void;
+}
+
 async function get({
   page,
 }: GetTodoControllerInput): Promise<OutputGetTodoController> {
@@ -59,8 +65,20 @@ function create({ content, onError, onSuccess }: InputCreateTodo) {
     });
 }
 
+function toggleDone({ id, onError, updateTodoOnScreen }: InputToggleDone) {
+  todoRepository
+    .toggleDone(id)
+    .then(() => {
+      updateTodoOnScreen();
+    })
+    .catch(() => {
+      onError();
+    });
+}
+
 export const todoController = {
   get,
   filterTodosByContent,
   create,
+  toggleDone,
 };
