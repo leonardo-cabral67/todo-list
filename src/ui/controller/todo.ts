@@ -25,6 +25,12 @@ interface InputToggleDone {
   updateTodoOnScreen(): void;
 }
 
+interface InputDeleteTodoById {
+  id: string;
+  onError(error: any): void;
+  onSuccess(): void;
+}
+
 async function get({
   page,
 }: GetTodoControllerInput): Promise<OutputGetTodoController> {
@@ -76,9 +82,21 @@ function toggleDone({ id, onError, updateTodoOnScreen }: InputToggleDone) {
     });
 }
 
+function deleteTodoById({ id, onError, onSuccess }: InputDeleteTodoById) {
+  todoRepository
+    .deleteTodoById(id)
+    .then(() => {
+      onSuccess();
+    })
+    .catch((error) => {
+      onError(error);
+    });
+}
+
 export const todoController = {
   get,
   filterTodosByContent,
   create,
   toggleDone,
+  deleteTodoById,
 };
