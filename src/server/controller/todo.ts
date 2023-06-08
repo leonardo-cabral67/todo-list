@@ -1,3 +1,4 @@
+import { HttpNotFoundError } from "@server/infra/errors";
 import { todoRepository } from "@server/repository/todo";
 import { NextApiRequest, NextApiResponse } from "next";
 import { z as schema } from "zod";
@@ -69,8 +70,38 @@ function toggleDone(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
+function deleteTodoById(req: NextApiRequest, res: NextApiResponse) {
+  const QuerySchema = schema.object({
+    id: schema.string().uuid().nonempty(),
+  });
+
+  const parsedQuery = QuerySchema.safeParse(req.query);
+
+  if (!parsedQuery.success) {
+    return res.status(401).json({
+      message: "You must have to provide a valid ID!",
+      error: parsedQuery.error,
+    });
+  }
+  try {
+    const todoId = parsedQuery.data.id;
+    todoRepository.deleteTodoById(todoId);
+    return res.status(204).end();
+  } catch (err) {
+    if (err instanceof HttpNotFoundError) {
+      return res.status(err.status).json({
+        error: err.message,
+      });
+    }
+    return res.status(500).json({
+      error: "Server Error",
+    });
+  }
+}
+
 export const todoController = {
   get,
   create,
   toggleDone,
+  deleteTodoById,
 };
