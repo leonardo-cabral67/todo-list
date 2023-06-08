@@ -1,3 +1,4 @@
+import { Todo } from "@ui/schema/todo";
 import { readFileSync, writeFileSync } from "fs";
 import { v4 as uuid } from "uuid";
 
@@ -74,4 +75,26 @@ export function updateTodo(
   );
 
   return updatedTodo;
+}
+
+export function deleteTodoById(id: string): Todo | boolean {
+  const ALL_TODOS = read();
+  const todoDeleted = ALL_TODOS.find((todo) => todo.id === id);
+
+  const todosWithoutDeleted = ALL_TODOS.filter((todo) => {
+    return todo.id !== id;
+  });
+
+  writeFileSync(
+    DB_FILE_PATH,
+    JSON.stringify(
+      {
+        todos: todosWithoutDeleted,
+      },
+      null,
+      1
+    )
+  );
+
+  return todoDeleted ?? false;
 }
