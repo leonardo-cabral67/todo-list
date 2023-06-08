@@ -1,4 +1,10 @@
-import { createByContent, read, updateTodo } from "@db-crud-todo";
+import {
+  createByContent,
+  read,
+  updateTodo,
+  deleteTodoById as dbDeleteTodo,
+} from "@db-crud-todo";
+import { HttpNotFoundError } from "@server/infra/errors";
 
 type UUID = string;
 
@@ -73,8 +79,19 @@ function toggleDone(id: UUID): Todo {
   return updatedTodo;
 }
 
+function deleteTodoById(id: UUID) {
+  const deletedTodo = dbDeleteTodo(id);
+
+  if (!deletedTodo) {
+    throw new HttpNotFoundError(`There is no todo with id: ${id}`);
+  }
+
+  return deletedTodo;
+}
+
 export const todoRepository = {
   get,
   create,
   toggleDone,
+  deleteTodoById,
 };
