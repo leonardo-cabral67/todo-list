@@ -137,7 +137,26 @@ export default function HomePage() {
                 <td>{todo.id.substring(0, 4)}</td>
                 <td>{todo.content}</td>
                 <td align="right">
-                  <button data-type="delete">Apagar</button>
+                  <button
+                    data-type="delete"
+                    onClick={() => {
+                      todoController.deleteTodoById({
+                        id: todo.id,
+                        onError(error) {
+                          console.error(error);
+                        },
+                        onSuccess() {
+                          setTodos(() => {
+                            return todos.filter(
+                              (currentTodo) => currentTodo.id !== todo.id
+                            );
+                          });
+                        },
+                      });
+                    }}
+                  >
+                    Apagar
+                  </button>
                 </td>
               </tr>
             ))}
