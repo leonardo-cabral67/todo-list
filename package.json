@@ -6,7 +6,7 @@
   "scripts": {
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "start-server-and-test dev http://localhost:3000/ cy:run",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
