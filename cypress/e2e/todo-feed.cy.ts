@@ -20,17 +20,18 @@ describe("Todo feed", () => {
       })
     ).as("createTodo");
 
-    // Visit url
+    // 1 - Visit url
     cy.visit("/");
-    // Select input
-    const $inputAddTodo = cy.get("input[name='add-todo']");
-    // type a new tpdp
-    $inputAddTodo.type("test todo from cypress");
-    //select button
-    const $btnAddTodo = cy.get("button[aria-label='Adicionar novo item']");
-    // click on button
-    $btnAddTodo.click();
-    // check if appeared a new todo
+
+    // 2 & 3 - Select input and type a new tpdp
+    const inputAddTodo = "input[name='add-todo']";
+    cy.get(inputAddTodo).type("test todo from cypress");
+
+    // 4 & 5 - select and click on button
+    const buttonAddNewTodo = "button[aria-label='Adicionar novo item']";
+    cy.get(buttonAddNewTodo).click();
+
+    // 6 - check if appeared a new todo
     cy.get("table > tbody").contains("test todo from cypress");
   });
 });
