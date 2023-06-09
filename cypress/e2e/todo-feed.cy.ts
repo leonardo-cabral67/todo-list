@@ -31,6 +31,6 @@ describe("Todo feed", () => {
     // click on button
     $btnAddTodo.click();
     // check if appeared a new todo
-    cy.contains("test todo from cypress");
+    cy.get("table > tbody").contains("test todo from cypress");
   });
 });
