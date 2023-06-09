@@ -1,3 +1,7 @@
 {
-  "recommendations": ["Editorconfig.Editorconfig", "dbaeumer.vscode-eslint"]
+  "recommendations": [
+    "Editorconfig.Editorconfig",
+    "dbaeumer.vscode-eslint",
+    "github.vscode-github-actions"
+  ]
 }
