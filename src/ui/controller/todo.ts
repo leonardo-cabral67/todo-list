@@ -27,7 +27,7 @@ interface InputToggleDone {
 
 interface InputDeleteTodoById {
   id: string;
-  onError(error: any): void;
+  onError(error: unknown): void;
   onSuccess(): void;
 }
 
