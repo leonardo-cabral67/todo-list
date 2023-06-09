@@ -15,3 +15,14 @@ jobs:
         run: "npm ci"
       - name: "Lint project"
         run: "npm run lint"
+  test-e2e:
+    runs-on: ubuntu-latest
+    container: cypress/browsers:node16.16.0-chrome107-ff107-edge
+    steps:
+      - uses: actions/checkout@v3
+      - name: "Debug"
+        run: "ls -la"
+      - name: "Install Dependencies"
+        run: "npm ci"
+      - name: Run tests with cypress
+        uses: "npm run test"
