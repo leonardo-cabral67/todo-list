@@ -12,6 +12,7 @@ module.exports = {
     "@typescript-eslint",
     "cypress",
     "chai-friendly",
+    "no-only-tests",
   ],
   extends: [
     "eslint:recommended",
@@ -36,5 +37,6 @@ module.exports = {
   rules: {
     "no-console": ["error", { allow: ["error"] }],
     "react/no-unknown-property": ["error", { ignore: ["jsx", "global"] }],
+    "no-only-tests/no-only-tests": "error",
   },
 };
