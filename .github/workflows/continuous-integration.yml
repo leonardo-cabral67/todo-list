@@ -16,7 +16,7 @@ jobs:
       - name: "Lint project"
         run: "npm run lint"
 
-  test:
+  test-e2e:
     runs-on: ubuntu-latest
     container: cypress/browsers:node16.16.0-chrome107-ff107-edge
     steps:
