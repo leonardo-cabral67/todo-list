@@ -1,16 +1,16 @@
 {
- "todos": [
-  {
-   "id": "00f24a80-4f43-4995-baea-b64e86c84909",
-   "content": "first",
-   "date": "2023-06-07T23:48:19.980Z",
-   "done": true
-  },
-  {
-   "id": "0187a49a-1f29-4bb2-9436-cce08cb49af8",
-   "content": "second",
-   "date": "2023-06-08T04:05:28.700Z",
-   "done": true
-  }
- ]
+  "todos": [
+    {
+      "id": "00f24a80-4f43-4995-baea-b64e86c84909",
+      "content": "first",
+      "date": "2023-06-07T23:48:19.980Z",
+      "done": false
+    },
+    {
+      "id": "0187a49a-1f29-4bb2-9436-cce08cb49af8",
+      "content": "second",
+      "date": "2023-06-08T04:05:28.700Z",
+      "done": true
+    }
+  ]
 }
