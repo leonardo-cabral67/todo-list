@@ -5,6 +5,8 @@ import {
   deleteTodoById as dbDeleteTodo,
 } from "@db-crud-todo";
 import { HttpNotFoundError } from "@server/infra/errors";
+import { TodoSchema } from "@server/schema/todo";
+import { createClient } from "@supabase/supabase-js";
 
 type UUID = string;
 
@@ -26,34 +28,47 @@ interface OutputGetTodoRepository {
   pages: number;
 }
 
-function get({
+async function get({
   page,
   limit,
-}: GetTodoRepositoryInput = {}): OutputGetTodoRepository {
+}: GetTodoRepositoryInput = {}): Promise<OutputGetTodoRepository> {
   const currentPage = page || 1;
-  const currentLimit = limit || 2;
-  const ALL_TODOS = read().reverse();
-  const totalTodos = ALL_TODOS.length;
-  const totalPages = calculatePages(totalTodos, currentLimit);
+  const currentLimit = limit || 10;
 
-  const todosPaginated = paginate(currentPage, currentLimit, ALL_TODOS);
+  const startIndex: number = (currentPage - 1) * currentLimit;
+  const endIndex: number = currentPage * currentLimit - 1;
+
+  // =========== SUPABASE =============
+  // TODO: Separar em outro arquivo
+  const supabaseUrl = process.env.SUPABASE_URL || "";
+  const supabaseSecret = process.env.SUPABASE_SECRET_KEY || "";
+  const supabase = createClient(supabaseUrl, supabaseSecret);
+  // =========== SUPABASE =============
+
+  const { data, error, count } = await supabase
+    .from("todos")
+    .select("*", {
+      count: "exact",
+    })
+    .range(startIndex, endIndex);
+
+  if (error) throw new Error("failed to fecth data");
+
+  const parsedData = TodoSchema.array().safeParse(data);
+
+  if (!parsedData.success) {
+    throw parsedData.error;
+  }
+
+  const todos = parsedData.data;
+  const total = count || todos.length;
+  const pages = Math.ceil(total / currentLimit);
+
   return {
-    todos: todosPaginated,
-    total: totalTodos,
-    pages: totalPages,
+    total,
+    pages,
+    todos,
   };
-}
-
-function paginate(page: number, limit: number, todos: Todo[]) {
-  const startIndex: number = (page - 1) * limit;
-  const endIndex: number = page * limit;
-  const todosPaginated = todos.slice(startIndex, endIndex);
-  return todosPaginated;
-}
-
-function calculatePages(todosLength: number, limit: number) {
-  const pages: number = Math.ceil(todosLength / limit);
-  return pages;
 }
 
 function create(content: string): Todo {
