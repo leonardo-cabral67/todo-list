@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { todoController } from "@server/controller/todo";
 
-export default function handler(
+export default async function handler(
   request: NextApiRequest,
   response: NextApiResponse
 ) {
   if (request.method === "GET") {
-    return todoController.get(request, response);
+    return await todoController.get(request, response);
   }
 
   if (request.method === "POST") {
