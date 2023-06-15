@@ -1,5 +1,4 @@
 import {
-  createByContent,
   read,
   updateTodo,
   deleteTodoById as dbDeleteTodo,
@@ -28,6 +27,13 @@ interface OutputGetTodoRepository {
   pages: number;
 }
 
+// =========== SUPABASE =============
+// TODO: Separar em outro arquivo
+const supabaseUrl = process.env.SUPABASE_URL || "";
+const supabaseSecret = process.env.SUPABASE_SECRET_KEY || "";
+const supabase = createClient(supabaseUrl, supabaseSecret);
+// =========== SUPABASE =============
+
 async function get({
   page,
   limit,
@@ -37,13 +43,6 @@ async function get({
 
   const startIndex: number = (currentPage - 1) * currentLimit;
   const endIndex: number = currentPage * currentLimit - 1;
-
-  // =========== SUPABASE =============
-  // TODO: Separar em outro arquivo
-  const supabaseUrl = process.env.SUPABASE_URL || "";
-  const supabaseSecret = process.env.SUPABASE_SECRET_KEY || "";
-  const supabase = createClient(supabaseUrl, supabaseSecret);
-  // =========== SUPABASE =============
 
   const { data, error, count } = await supabase
     .from("todos")
@@ -74,9 +73,20 @@ async function get({
   };
 }
 
-function create(content: string): Todo {
-  const newTodo = createByContent(content);
-  return newTodo;
+async function create(content: string): Promise<Todo> {
+  const { data, error } = await supabase
+    .from("todos")
+    .insert([{ content }])
+    .select()
+    .single();
+
+  if (error) throw new Error("Could not create TODO");
+
+  const parsedTodo = TodoSchema.safeParse(data);
+
+  if (!parsedTodo.success) throw parsedTodo.error;
+
+  return parsedTodo.data;
 }
 
 function toggleDone(id: UUID): Todo {
