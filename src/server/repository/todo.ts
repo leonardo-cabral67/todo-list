@@ -107,14 +107,14 @@ function toggleDone(id: UUID): Todo {
   return updatedTodo;
 }
 
-function deleteTodoById(id: UUID) {
-  const deletedTodo = dbDeleteTodo(id);
+async function deleteTodoById(id: UUID) {
+  const { error, data } = await supabase.from("todos").delete().eq("id", id);
 
-  if (!deletedTodo) {
+  if (error) {
     throw new HttpNotFoundError(`There is no todo with id: ${id}`);
   }
 
-  return deletedTodo;
+  return data;
 }
 
 export const todoRepository = {
