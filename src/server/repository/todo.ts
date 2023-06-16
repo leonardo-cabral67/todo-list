@@ -1,8 +1,3 @@
-import {
-  read,
-  updateTodo,
-  deleteTodoById as dbDeleteTodo,
-} from "@db-crud-todo";
 import { HttpNotFoundError } from "@server/infra/errors";
 import { TodoSchema } from "@server/schema/todo";
 import { createClient } from "@supabase/supabase-js";
@@ -105,22 +100,24 @@ async function create(content: string): Promise<Todo> {
   return parsedTodo.data;
 }
 
-function toggleDone(id: UUID): Todo {
-  const ALL_TODOS = read();
+async function toggleDone(id: UUID): Promise<Todo> {
+  const currentTodoExists = await getTodoById(id);
+  if (!currentTodoExists) throw new Error(`There is no todo with id ${id}`);
 
-  const currentTodo = ALL_TODOS.find((todo) => {
-    return todo.id === id;
-  });
+  const { data, error } = await supabase
+    .from("todos")
+    .update({ done: !currentTodoExists.done })
+    .eq("id", id)
+    .select()
+    .single();
 
-  if (!currentTodo) {
-    throw new Error(`Todo with id "${id}" not found`);
-  }
+  if (error) throw new Error("Todo could not be updated");
 
-  const updatedTodo = updateTodo(id, {
-    done: !currentTodo.done,
-  });
+  const parsedTodo = TodoSchema.safeParse(data);
 
-  return updatedTodo;
+  if (!parsedTodo.success) throw parsedTodo.error;
+
+  return parsedTodo.data;
 }
 
 async function deleteTodoById(id: UUID) {
