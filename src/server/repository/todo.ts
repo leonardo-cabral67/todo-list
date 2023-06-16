@@ -1,7 +1,6 @@
 import { HttpNotFoundError } from "@server/infra/errors";
 import { TodoSchema } from "@server/schema/todo";
-import { createClient } from "@supabase/supabase-js";
-
+import supabase from "@server/infra/db/supabase";
 type UUID = string;
 
 interface Todo {
@@ -21,13 +20,6 @@ interface OutputGetTodoRepository {
   total: number;
   pages: number;
 }
-
-// =========== SUPABASE =============
-// TODO: Separar em outro arquivo
-const supabaseUrl = process.env.SUPABASE_URL || "";
-const supabaseSecret = process.env.SUPABASE_SECRET_KEY || "";
-const supabase = createClient(supabaseUrl, supabaseSecret);
-// =========== SUPABASE =============
 
 async function get({
   page,
