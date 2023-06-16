@@ -73,6 +73,22 @@ async function get({
   };
 }
 
+async function getTodoById(id: UUID): Promise<Todo> {
+  const { error, data } = await supabase
+    .from("todos")
+    .select()
+    .eq("id", id)
+    .single();
+
+  if (error) throw new Error(`There is no todo with id ${id}`);
+
+  const parsedTodo = TodoSchema.safeParse(data);
+
+  if (!parsedTodo.success) throw parsedTodo.error;
+
+  return parsedTodo.data;
+}
+
 async function create(content: string): Promise<Todo> {
   const { data, error } = await supabase
     .from("todos")
