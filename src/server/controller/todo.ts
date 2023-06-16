@@ -38,11 +38,23 @@ async function create(req: NextApiRequest, res: NextApiResponse) {
     });
   }
 
-  const todoCreated = await todoRepository.create(body.data.content);
+  try {
+    const todoCreated = await todoRepository.create(body.data.content);
 
-  res.status(201).json({
-    todo: todoCreated,
-  });
+    res.status(201).json({
+      todo: todoCreated,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(400).json({
+        error,
+      });
+
+      res.status(500).json({
+        error: "Internal server error. Your todo could not be created",
+      });
+    }
+  }
 }
 
 function toggleDone(req: NextApiRequest, res: NextApiResponse) {
