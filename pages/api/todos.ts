@@ -10,7 +10,7 @@ export default async function handler(
   }
 
   if (request.method === "POST") {
-    return todoController.create(request, response);
+    return await todoController.create(request, response);
   }
 
   response.status(405).json({ message: "method not allowed" });
