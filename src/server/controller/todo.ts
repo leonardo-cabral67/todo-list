@@ -57,7 +57,7 @@ async function create(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-function toggleDone(req: NextApiRequest, res: NextApiResponse) {
+async function toggleDone(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
   const parsedTodoId = schema.string().nonempty().uuid().safeParse(id);
 
@@ -69,7 +69,7 @@ function toggleDone(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const updatedTodo = todoRepository.toggleDone(parsedTodoId.data);
+    const updatedTodo = await todoRepository.toggleDone(parsedTodoId.data);
     res.status(200).json({
       todo: updatedTodo,
     });
@@ -79,6 +79,9 @@ function toggleDone(req: NextApiRequest, res: NextApiResponse) {
         message: error.message,
       });
     }
+    return res.status(500).json({
+      message: "Server Error. Todo could not be updated",
+    });
   }
 }
 
