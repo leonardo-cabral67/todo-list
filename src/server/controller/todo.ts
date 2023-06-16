@@ -28,7 +28,7 @@ const TodoCreateBodySchema = schema.object({
   content: schema.string(),
 });
 
-function create(req: NextApiRequest, res: NextApiResponse) {
+async function create(req: NextApiRequest, res: NextApiResponse) {
   const body = TodoCreateBodySchema.safeParse(req.body);
 
   if (!body.success) {
@@ -38,7 +38,7 @@ function create(req: NextApiRequest, res: NextApiResponse) {
     });
   }
 
-  const todoCreated = todoRepository.create(body.data.content);
+  const todoCreated = await todoRepository.create(body.data.content);
 
   res.status(201).json({
     todo: todoCreated,
