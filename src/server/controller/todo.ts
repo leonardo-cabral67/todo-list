@@ -82,7 +82,7 @@ function toggleDone(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-function deleteTodoById(req: NextApiRequest, res: NextApiResponse) {
+async function deleteTodoById(req: NextApiRequest, res: NextApiResponse) {
   const QuerySchema = schema.object({
     id: schema.string().uuid().nonempty(),
   });
@@ -97,7 +97,7 @@ function deleteTodoById(req: NextApiRequest, res: NextApiResponse) {
   }
   try {
     const todoId = parsedQuery.data.id;
-    todoRepository.deleteTodoById(todoId);
+    await todoRepository.deleteTodoById(todoId);
     return res.status(204).end();
   } catch (err) {
     if (err instanceof HttpNotFoundError) {
