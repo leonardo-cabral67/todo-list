@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [opened, synchronize]
 
+env:
+    VERCEL_ORG_ID: uPTAMwfDLIP8xACgqdobxvOL
+    VERCEL_PROJECT_ID: prj_8fIzO9odbl58hXKwqYWsBhjeDFz5
+
 jobs:
    lint:
     runs-on: ubuntu-latest
