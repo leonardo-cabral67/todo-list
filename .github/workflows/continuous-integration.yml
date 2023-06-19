@@ -4,6 +4,11 @@ on:
   pull_request:
     types: [opened, synchronize]
 
+env:
+  SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+  SUPABASE_PUBLIC_KEY: ${{secrets.SUPABASE_PUBLIC_KEY}}
+  SUPABASE_SECRET_KEY: ${{secrets.SUPABASE_SECRET_KEY}}
+
 jobs:
   lint:
     runs-on: ubuntu-latest
