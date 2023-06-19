@@ -1,11 +1,6 @@
-import {
-  createByContent,
-  read,
-  updateTodo,
-  deleteTodoById as dbDeleteTodo,
-} from "@db-crud-todo";
 import { HttpNotFoundError } from "@server/infra/errors";
-
+import { TodoSchema } from "@server/schema/todo";
+import supabase from "@server/infra/db/supabase";
 type UUID = string;
 
 interface Todo {
@@ -26,67 +21,105 @@ interface OutputGetTodoRepository {
   pages: number;
 }
 
-function get({
+async function get({
   page,
   limit,
-}: GetTodoRepositoryInput = {}): OutputGetTodoRepository {
+}: GetTodoRepositoryInput = {}): Promise<OutputGetTodoRepository> {
   const currentPage = page || 1;
-  const currentLimit = limit || 2;
-  const ALL_TODOS = read().reverse();
-  const totalTodos = ALL_TODOS.length;
-  const totalPages = calculatePages(totalTodos, currentLimit);
+  const currentLimit = limit || 10;
 
-  const todosPaginated = paginate(currentPage, currentLimit, ALL_TODOS);
+  const startIndex: number = (currentPage - 1) * currentLimit;
+  const endIndex: number = currentPage * currentLimit - 1;
+
+  const { data, error, count } = await supabase
+    .from("todos")
+    .select("*", {
+      count: "exact",
+    })
+    .order("date", {
+      ascending: false,
+    })
+    .range(startIndex, endIndex);
+
+  if (error) throw new Error("failed to fecth data");
+
+  const parsedData = TodoSchema.array().safeParse(data);
+
+  if (!parsedData.success) {
+    throw parsedData.error;
+  }
+
+  const todos = parsedData.data;
+  const total = count || todos.length;
+  const pages = Math.ceil(total / currentLimit);
+
   return {
-    todos: todosPaginated,
-    total: totalTodos,
-    pages: totalPages,
+    total,
+    pages,
+    todos,
   };
 }
 
-function paginate(page: number, limit: number, todos: Todo[]) {
-  const startIndex: number = (page - 1) * limit;
-  const endIndex: number = page * limit;
-  const todosPaginated = todos.slice(startIndex, endIndex);
-  return todosPaginated;
+async function getTodoById(id: UUID): Promise<Todo> {
+  const { error, data } = await supabase
+    .from("todos")
+    .select()
+    .eq("id", id)
+    .single();
+
+  if (error) throw new Error(`There is no todo with id ${id}`);
+
+  const parsedTodo = TodoSchema.safeParse(data);
+
+  if (!parsedTodo.success) throw parsedTodo.error;
+
+  return parsedTodo.data;
 }
 
-function calculatePages(todosLength: number, limit: number) {
-  const pages: number = Math.ceil(todosLength / limit);
-  return pages;
+async function create(content: string): Promise<Todo> {
+  const { data, error } = await supabase
+    .from("todos")
+    .insert([{ content }])
+    .select()
+    .single();
+
+  if (error) throw new Error("Could not create TODO");
+
+  const parsedTodo = TodoSchema.safeParse(data);
+
+  if (!parsedTodo.success) throw parsedTodo.error;
+
+  return parsedTodo.data;
 }
 
-function create(content: string): Todo {
-  const newTodo = createByContent(content);
-  return newTodo;
+async function toggleDone(id: UUID): Promise<Todo> {
+  const currentTodoExists = await getTodoById(id);
+  if (!currentTodoExists) throw new Error(`There is no todo with id ${id}`);
+
+  const { data, error } = await supabase
+    .from("todos")
+    .update({ done: !currentTodoExists.done })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw new Error("Todo could not be updated");
+
+  const parsedTodo = TodoSchema.safeParse(data);
+
+  if (!parsedTodo.success) throw parsedTodo.error;
+
+  return parsedTodo.data;
 }
 
-function toggleDone(id: UUID): Todo {
-  const ALL_TODOS = read();
+async function deleteTodoById(id: UUID) {
+  const { error, data } = await supabase.from("todos").delete().eq("id", id);
 
-  const currentTodo = ALL_TODOS.find((todo) => {
-    return todo.id === id;
-  });
-
-  if (!currentTodo) {
-    throw new Error(`Todo with id "${id}" not found`);
-  }
-
-  const updatedTodo = updateTodo(id, {
-    done: !currentTodo.done,
-  });
-
-  return updatedTodo;
-}
-
-function deleteTodoById(id: UUID) {
-  const deletedTodo = dbDeleteTodo(id);
-
-  if (!deletedTodo) {
+  if (error) {
     throw new HttpNotFoundError(`There is no todo with id: ${id}`);
   }
 
-  return deletedTodo;
+  return data;
 }
 
 export const todoRepository = {
