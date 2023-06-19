@@ -1,2 +1,4 @@
-# todo-list
-It is just a simple to do list, but in this one i use the best software development practices!
+# Todo-list
+
+## ABout
+  This is a simple CRUD of a todo-list project. However, i use the best software development practices, continuous integration and continuous delivery
