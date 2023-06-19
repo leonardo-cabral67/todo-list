@@ -68,3 +68,41 @@
     "uuid": "^9.0.0"
   }
 ```
+
+## Architecture
+  This application has a simple architecture. Both backend and frontend are based on layers. These simple layers are based on input, processing and output. My layers are: View, controller and repository.
+
+  * ### View:
+      **Where application will get user input.** 
+    
+      In frontend it will be the user interface, where user can create, read, update and delete TODOs.
+
+      In backend it will be where application receives user's input too, but there is no interface, in this case this "place" will be our http methods, where operations happens and we receive http requests (which uses json).
+    
+    In the project, these layers will be:
+      * frontend: pages/index.ts - (until this moment this is the only User interface route)
+      * backend: pages/api/ - everything inside this folder are api routes.
+
+  * ### Controller:
+     It **controlls the data flow on application**. it is responsible to receive data from input, forward to processing part and return the result of processing.
+
+     In frontend the controller will be responsible to get data from user interface inputs, and forward to repository where the processing will be done, then return the output from repository.
+
+     In Backend the controller will receive data from http request, forward to repository where the processing will be done and return the processing will be done, then return the output from repository.
+
+  * ### Repository:
+      Basically it is the **processing** layer. This one is responsible to processing data received by controller, access data, and return output.
+
+      Front-end: Repository will receive the data from view through controller, then wil fetch data to api, and will return the response from APÌ.
+
+      Backend: Respository will receive data from http request though controller, then will make a operation on database (in our application database is Supabase), then it will return the output from db.
+    
+    In a simple way: Data-flow is like this:
+```
+    **VIEW** <-------------> **CONTROLLER** <-------------> **REPOSITORY** <-----------> **DATA** 
+     input                 (control data flow)             processing of received data
+                                                           and access external data
+    
+                       
+```
+    
