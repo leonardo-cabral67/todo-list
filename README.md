@@ -101,8 +101,59 @@
 ```
     **VIEW** <-------------> **CONTROLLER** <-------------> **REPOSITORY** <-----------> **DATA** 
      input                 (control data flow)             processing of received data
-                                                           and access external data
-    
-                       
+                                                           and access external data                   
 ```
+
+## Routes
+  ### Base URL: https://todo-list-simple-crud.vercel.app/
+  ### Front-end: "/"
+  this is the index of this application. This is where you can create, read, update and delete todos.
+
+  ### Backend:
+  * Get Todos (GET): "/api/todos":
+     
+    In this route you are going to get todos, it will return a simple structure like this:
+  
+    ```json
+    [
+      "total": 3,
+      "pages": 1,
+      "todos": [
+        {
+          "id": "50d737f3-219c-4299-92fb-4383c0f4a704", // Id of type UUID
+          "content": "third", // it is a string
+          "date": "2023-06-15T20:44:51.172Z", // type ISO String
+          "done": true // boolean value
+        },
+        ...
+      ]
+    ```
+  * Create todo (POST): "/api/todos":
     
+      No body da requisição deve haver um objecto Json no seguinte formato:
+    
+    ```json
+      {
+        "content": "anything" // it should be a string
+      }
+    ```
+  * Update todo - just toggle done (PUT): "/api/todos/[id]/toggle-done":
+    
+      It receives a URI parameter (id) of type UUID and returns changed TODO
+    
+     ```json
+        {
+          "todo": {
+            "id": "50d737f3-219c-4299-92fb-4383c0f4a704", // Id of type UUID
+            "content": "some content", // it is a string
+            "date": "2023-06-15T20:44:51.172Z", // type ISO String
+            "done": true // boolean value
+          },
+        }
+      ```
+
+   * Delete todo (DELETE): "/api/todos/[id]/":
+    
+      It receives a URI parameter (id) of type UUID and has no output
+  
+ 
