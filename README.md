@@ -1,7 +1,14 @@
 # Todo-list
 
+## Summary
+* [About](#about)
+
+---
+
 ## About
   This is a simple CRUD of a todo-list project. However, i use the best software development practices, continuous integration and continuous delivery
+
+---
 
 ## Technologies
 * ### Language
@@ -34,6 +41,8 @@
 
 * ### Deploy
   * Vercel
+
+---
 
 ## Dependencies
 ```JSON
@@ -68,6 +77,7 @@
     "uuid": "^9.0.0"
   }
 ```
+---
 
 ## Architecture
   This application has a simple architecture. Both backend and frontend are based on layers. These simple layers are based on input, processing and output. My layers are: View, controller and repository.
@@ -103,6 +113,7 @@
      input                 (control data flow)             processing of received data
                                                            and access external data                   
 ```
+---
 
 ## Routes
   ### Base URL: https://todo-list-simple-crud.vercel.app/
