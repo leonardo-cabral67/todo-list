@@ -15,11 +15,15 @@
 ---
 
 ## About
+[back to summary](#summary)
+
   This is a simple CRUD of a todo-list project. However, i use the best software development practices, continuous integration and continuous delivery
 
 ---
 
 ## Technologies
+[back to summary](#summary)
+
 * ### Language
    * Typescript
 
@@ -54,6 +58,9 @@
 ---
 
 ## Dependencies
+
+[back to summary](#summary)
+
 ```JSON
 "dependencies": {
     "@supabase/supabase-js": "^2.24.0",
@@ -89,6 +96,9 @@
 ---
 
 ## Architecture
+
+[back to summary](#summary)
+
   This application has a simple architecture. Both backend and frontend are based on layers. These simple layers are based on input, processing and output. My layers are: View, controller and repository.
 
   * ### View:
@@ -125,6 +135,9 @@
 ---
 
 ## Routes
+
+[back to summary](#summary)
+
   ### Base URL: https://todo-list-simple-crud.vercel.app/
   ### Front-end: "/"
   this is the index of this application. This is where you can create, read, update and delete todos.
