@@ -2,7 +2,16 @@
 
 ## Summary
 * [About](#about)
-
+* [Technologies](#technologies)
+* [Dependencies](#dependencies)
+* [Architecture](#architecture)
+  * [View](#view)
+  * [Controller](#controller)
+  * [Repository](#repository)
+* [Routes](#routes)
+  * [Frontend](#front-end-)
+  * [Backend](#backend-1)
+ 
 ---
 
 ## About
