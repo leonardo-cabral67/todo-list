@@ -1,8 +1,8 @@
 name: "[CD] Continuous Delivery"
 
 on:
-  pull_request:
-    types: [opened, synchronize]
+  push:
+    branches: [main]
 
 env:
     VERCEL_ORG_ID: uPTAMwfDLIP8xACgqdobxvOL
